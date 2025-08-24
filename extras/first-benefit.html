@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenAPI Collaboration</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #FFFFFF, #F8F9FA);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+        }
+
+        .collaboration-container {
+            max-width: 1200px;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: linear-gradient(180deg, #FFFFFF, #F8F9FA);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #E8EAED;
+        }
+
+        /* Header */
+        .header {
+            background: #FFFFFF;
+            padding: 5px 20px;
+            border-bottom: 2px solid #E8EAED;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+            z-index: 10;
+            height: 56px;
+        }
+
+        .project-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #E8F0FE, #D2E3FC);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1A73E8;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .collaboration-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .badge {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            /* border: 2px solid #E8EAED; */
+            background: #FFFFFF;
+            color: #202124;
+            display: flex;
+            align-items: center;
+        }
+
+        .badge.live {
+            background: #88304E;
+            color: #fff
+            /* border-color: #34A853; */
+        }
+
+        .badge.sync {
+            background: linear-gradient(135deg, #FEF7E0, #FCE8B2);
+            color: #B26000;
+            border-color: #FBBC04;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        /* Left Side - OpenAPI Editor */
+        .editor-section {
+            background: #202124;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            order: 1;
+        }
+
+        /* Right Side - Live Preview */
+        .preview-section {
+            background: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            order: 2;
+        }
+
+        .editor-header {
+            background: #202124;
+            padding: 12px 16px;
+            border-bottom: 2px solid #E8EAED;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+        }
+
+        .file-tabs {
+            display: flex;
+            gap: 4px;
+        }
+
+        .tab {
+            padding: 8px 12px;
+            background: #E8EAED;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 2px solid transparent;
+            color: #202124;
+        }
+
+        .tab.active {
+            background: #FFFFFF;
+            border-color: #1A73E8;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            background: #FFFFFF;
+            border: 2px solid #88304E;
+            border-radius: 8px;
+            color: #88304E;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .action-btn:hover {
+            background: #88304E;
+            border-color: #88304E;
+            color: #FFFFFF;
+            transform: translateY(-1px);
+        }
+
+        .editor-content {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            overflow: hidden;
+            background: #202124;
+            position: relative;
+        }
+
+        .editor-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(transparent, #202124);
+            pointer-events: none;
+        }
+
+        .yaml-line {
+            margin-bottom: 4px;
+            white-space: pre;
+            opacity: 0;
+            animation: typeWriter 0.4s ease forwards;
+        }
+
+        .yaml-key { color: #4285F4; }
+        .yaml-string { color: #34A853; }
+        .yaml-comment { color: #9AA0A6; }
+        .yaml-number { color: #FBBC04; }
+
+        /* Right Side - Live Preview */
+        .preview-header {
+            background: #FFFFFF;
+            padding: 12px 16px;
+            border-bottom: 2px solid #E8EAED;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 48px;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #202124;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .preview-icon {
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #E8F0FE, #D2E3FC);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1A73E8;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .stakeholder-avatars {
+            display: flex;
+            gap: -4px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: -4px;
+            position: relative;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .avatar:nth-child(1) {
+            background: linear-gradient(135deg, #E8F0FE, #D2E3FC);
+            color: #1A73E8;
+        }
+
+        .avatar:nth-child(2) {
+            background: linear-gradient(135deg, #E8F5E8, #CEE5CE);
+            color: #137333;
+        }
+
+        .avatar:nth-child(3) {
+            background: linear-gradient(135deg, #FEF7E0, #FCE8B2);
+            color: #B26000;
+        }
+
+        .avatar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #34A853, #137333);
+            border-radius: 8px;
+            border: 2px solid #FFFFFF;
+        }
+
+        .preview-content {
+            flex: 1;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            background: #FFFFFF;
+        }
+
+        .preview-scroll-container {
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .preview-scroll-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            animation: autoScroll 15s linear infinite;
+            padding-bottom: 100px;
+        }
+
+        /* Auto-scroll animation for preview content */
+        @keyframes autoScroll {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-50%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        /* Fade gradients for smooth visual effect */
+        .preview-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(#FFFFFF, transparent);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .preview-content::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, #FFFFFF);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .api-endpoint {
+            background: #FFFFFF;
+            border: 2px solid #E8EAED;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(15px);
+            animation: slideIn 0.5s ease forwards;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .endpoint-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #F8F9FA, #F1F3F4);
+            border-bottom: 2px solid #E8EAED;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .method {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 2px solid;
+        }
+
+        .method.get {
+            background: linear-gradient(135deg, #E8F5E8, #CEE5CE);
+            color: #137333;
+            border-color: #34A853;
+        }
+
+        .method.post {
+            background: linear-gradient(135deg, #E8F0FE, #D2E3FC);
+            color: #1A73E8;
+            border-color: #4285F4;
+        }
+
+        .method.put {
+            background: linear-gradient(135deg, #FEF7E0, #FCE8B2);
+            color: #B26000;
+            border-color: #FBBC04;
+        }
+
+        .method.delete {
+            background: linear-gradient(135deg, #FCE8E6, #FAD2CF);
+            color: #C5221F;
+            border-color: #EA4335;
+        }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .endpoint-body {
+            padding: 16px;
+        }
+
+        .endpoint-description {
+            font-size: 13px;
+            color: #5F6368;
+            margin-bottom: 12px;
+        }
+
+        .parameters {
+            margin-bottom: 8px;
+        }
+
+        .param-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+
+        .param-item {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #F8F9FA, #F1F3F4);
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            border: 2px solid #E8EAED;
+        }
+
+        .param-name {
+            font-weight: 600;
+            color: #202124;
+        }
+
+        .param-type {
+            color: #5F6368;
+            font-style: italic;
+        }
+
+        /* Real-time Updates Animation */
+        .update-notification {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #E8F5E8, #CEE5CE);
+            color: #137333;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            transform: translateY(-50px);
+            opacity: 0;
+            animation: slideDown 0.4s ease forwards, slideUp 0.4s ease 2s forwards;
+            z-index: 100;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid #34A853;
+        }
+
+        /* Collaboration Indicators */
+        .collaboration-cursor {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            pointer-events: none;
+            z-index: 50;
+            transition: all 2s ease;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 8px;
+            position: absolute;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .cursor-dev .cursor-dot {
+            background: linear-gradient(135deg, #4285F4, #1A73E8);
+        }
+
+        .cursor-product .cursor-dot {
+            background: linear-gradient(135deg, #34A853, #137333);
+        }
+
+        .cursor-label {
+            background: rgba(32, 33, 36, 0.9);
+            color: #FFFFFF;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 500;
+            position: absolute;
+            top: 16px;
+            left: 0;
+            white-space: nowrap;
+            box-shadow: 0px 4px 12px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+        }
+
+        .cursor-label::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border: 1px solid #FFFFFF;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        /* Animations */
+        @keyframes typeWriter {
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .collaboration-container {
+                width: 100%;
+                height: 100%;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            
+            .stakeholder-avatars {
+                display: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .collaboration-container {
+                height: 100%;
+                width: 100%;
+                border-radius: 0;
+            }
+            
+            .header {
+                padding: 12px 16px;
+                height: 48px;
+            }
+            
+            .project-title {
+                font-size: 14px;
+            }
+            
+            .main-content {
+                grid-template-rows: 60% 40%;
+            }
+            
+            .editor-content, .preview-content {
+                padding: 16px;
+                font-size: 12px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .yaml-line,
+            .api-endpoint,
+            .collaboration-cursor {
+                animation: none;
+                transition: none;
+            }
+            
+            .badge.live {
+                animation: none;
+            }
+            
+            .badge.sync::before {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="collaboration-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="project-title">
+                <!-- <div class="title-icon"></div> -->
+                User Management API v2.1
+            </div>
+            <div class="collaboration-badges">
+                <div class="badge live">Live Preview</div>
+                <!-- <div class="badge sync">Auto-Sync</div> -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Side - OpenAPI Editor -->
+            <div class="editor-section">
+            
+                <div class="editor-content" id="editorContent">
+                    <!-- YAML content will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Right Side - Live Preview -->
+            <div class="preview-section">
+                <div class="preview-header">
+                    <div class="preview-title">
+                        <!-- <div class="preview-icon"></div> -->
+                        Live API Documentation
+                    </div>
+                    <div class="stakeholder-avatars">
+                        <div class="avatar">D</div>
+                        <div class="avatar">P</div>
+                        <div class="avatar">Q</div>
+                    </div>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-scroll-container">
+                        <div class="preview-scroll-content" id="previewContent">
+                            <!-- API endpoints will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update Notification -->
+        <!-- <div class="update-notification" id="updateNotification">
+            Real-time update: New endpoint added
+        </div> -->
+
+        <!-- Collaboration Cursors -->
+        <div class="collaboration-cursor cursor-dev" id="devCursor">
+            <div class="cursor-dot"></div>
+            <div class="cursor-label">Alex (Dev)</div>
+        </div>
+
+        <div class="collaboration-cursor cursor-product" id="productCursor">
+            <div class="cursor-dot"></div>
+            <div class="cursor-label">Sarah (PM)</div>
+        </div>
+    </div>
+
+    <script>
+        // YAML content
+        const yamlContent = [
+            'openapi: 3.0.3',
+            'info:',
+            '  title: User Management API',
+            '  version: 2.1.0',
+            '  description: Collaborative API design',
+            '',
+            'paths:',
+            '  /users:',
+            '    get:',
+            '      summary: Get all users',
+            '      parameters:',
+            '        - name: limit',
+            '          in: query',
+            '          schema:',
+            '            type: integer',
+            '            default: 20',
+            '        - name: offset',
+            '          in: query',
+            '          schema:',
+            '            type: integer',
+            '            default: 0',
+            '      responses:',
+            '        "200":',
+            '          description: List of users',
+            '',
+            '    post:',
+            '      summary: Create new user',
+            '      requestBody:',
+            '        required: true',
+            '        content:',
+            '          application/json:',
+            '            schema:',
+            '              type: object',
+            '              required: [name, email]',
+            '              properties:',
+            '                name:',
+            '                  type: string',
+            '                email:',
+            '                  type: string',
+            '                  format: email'
+        ];
+
+        // API endpoints for preview
+        const apiEndpoints = [
+            {
+                method: 'GET',
+                path: '/users',
+                description: 'Retrieve paginated list of users',
+                parameters: [
+                    { name: 'limit', type: 'integer' },
+                    { name: 'offset', type: 'integer' },
+                    { name: 'search', type: 'string' }
+                ]
+            },
+            {
+                method: 'POST',
+                path: '/users',
+                description: 'Create a new user account',
+                parameters: [
+                    { name: 'name', type: 'string' },
+                    { name: 'email', type: 'string' }
+                ]
+            },
+            {
+                method: 'GET',
+                path: '/users/{id}',
+                description: 'Get user by ID',
+                parameters: [
+                    { name: 'id', type: 'string' }
+                ]
+            },
+            {
+                method: 'PUT',
+                path: '/users/{id}',
+                description: 'Update user information',
+                parameters: [
+                    { name: 'id', type: 'string' },
+                    { name: 'name', type: 'string' }
+                ]
+            },
+            {
+                method: 'DELETE',
+                path: '/users/{id}',
+                description: 'Remove user account and data',
+                parameters: [
+                    { name: 'id', type: 'string' },
+                    { name: 'force', type: 'boolean' }
+                ]
+            },
+            {
+                method: 'GET',
+                path: '/users/{id}/profile',
+                description: 'Get user profile information',
+                parameters: [
+                    { name: 'id', type: 'string' },
+                    { name: 'include', type: 'string' }
+                ]
+            }
+        ];
+
+        // Initialize the animation
+        function initAnimation() {
+            typeYAMLContent();
+            setTimeout(showAPIPreview, 1200);
+            setTimeout(showUpdateNotification, 2500);
+            animateCollaborationCursors();
+        }
+
+        // Type YAML content
+        function typeYAMLContent() {
+            const editorContent = document.getElementById('editorContent');
+            let lineIndex = 0;
+
+            function typeLine() {
+                if (lineIndex < yamlContent.length) {
+                    const line = yamlContent[lineIndex];
+                    const lineElement = document.createElement('div');
+                    lineElement.className = 'yaml-line';
+                    lineElement.style.animationDelay = `${lineIndex * 0.06}s`;
+                    
+                    lineElement.innerHTML = highlightYAML(line);
+                    editorContent.appendChild(lineElement);
+                    
+                    lineIndex++;
+                    setTimeout(typeLine, 120);
+                }
+            }
+
+            typeLine();
+        }
+
+        // YAML highlighting
+        function highlightYAML(line) {
+            // Comments
+            line = line.replace(/(#.*$)/g, '<span class="yaml-comment">$1</span>');
+            
+            // Keys (before colon)
+            line = line.replace(/^(\s*)([a-zA-Z_][a-zA-Z0-9_]*?):/g, '$1<span class="yaml-key">$2</span>:');
+            
+            // Strings in quotes
+            line = line.replace(/"([^"]*)"/g, '<span class="yaml-string">"$1"</span>');
+            
+            // Numbers
+            line = line.replace(/:\s*(\d+)/g, ': <span class="yaml-number">$1</span>');
+            
+            return line || '&nbsp;';
+        }
+
+        // Show API preview
+        function showAPIPreview() {
+            const previewContent = document.getElementById('previewContent');
+            let endpointIndex = 0;
+
+            function showEndpoint() {
+                if (endpointIndex < apiEndpoints.length) {
+                    const endpoint = apiEndpoints[endpointIndex];
+                    const endpointElement = createEndpointElement(endpoint);
+                    endpointElement.style.animationDelay = `${endpointIndex * 0.15}s`;
+                    previewContent.appendChild(endpointElement);
+                    
+                    endpointIndex++;
+                    setTimeout(showEndpoint, 300);
+                }
+            }
+
+            showEndpoint();
+        }
+
+        // Create endpoint element
+        function createEndpointElement(endpoint) {
+            const element = document.createElement('div');
+            element.className = 'api-endpoint';
+            
+            element.innerHTML = `
+                <div class="endpoint-header">
+                    <div class="method ${endpoint.method.toLowerCase()}">${endpoint.method}</div>
+                    <div class="endpoint-path">${endpoint.path}</div>
+                </div>
+                <div class="endpoint-body">
+                    <div class="endpoint-description">${endpoint.description}</div>
+                    <div class="parameters">
+                        <div class="param-title">Parameters:</div>
+                        ${endpoint.parameters.slice(0, 2).map(param => `
+                            <div class="param-item">
+                                <span class="param-name">${param.name}</span>
+                                <span class="param-type">${param.type}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            return element;
+        }
+
+        // Show update notification
+        function showUpdateNotification() {
+            const notification = document.getElementById('updateNotification');
+            notification.style.display = 'block';
+        }
+
+        // Collaboration cursors animation
+        function animateCollaborationCursors() {
+            const devCursor = document.getElementById('devCursor');
+            const productCursor = document.getElementById('productCursor');
+            
+            const positions = [
+                { x: 80, y: 180 },
+                { x: 150, y: 250 },
+                { x: 120, y: 320 },
+                { x: 500, y: 160 },
+                { x: 580, y: 220 },
+                { x: 520, y: 300 }
+            ];
+            
+            let devIndex = 0;
+            let productIndex = 3;
+            
+            function moveDevCursor() {
+                const pos = positions[devIndex % positions.length];
+                devCursor.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+                devIndex++;
+                
+                const delay = 10000 + Math.random() * 8000;
+                setTimeout(moveDevCursor, delay);
+            }
+            
+            function moveProductCursor() {
+                const pos = positions[productIndex % positions.length];
+                productCursor.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+                productIndex++;
+                
+                const delay = 12000 + Math.random() * 8000;
+                setTimeout(moveProductCursor, delay);
+            }
+            
+            setTimeout(moveDevCursor, 2000);
+            setTimeout(moveProductCursor, 3500);
+        }
+
+        // Restart animation
+        function restartAnimation() {
+            document.getElementById('editorContent').innerHTML = '';
+            document.getElementById('previewContent').innerHTML = '';
+            document.getElementById('updateNotification').style.display = 'none';
+            
+            const scrollContent = document.querySelector('.preview-scroll-content');
+            if (scrollContent) {
+                scrollContent.style.animation = 'none';
+                scrollContent.offsetHeight;
+                scrollContent.style.animation = 'autoScroll 15s linear infinite';
+            }
+            
+            setTimeout(initAnimation, 100);
+        }
+
+        // Auto-loop controller
+        let loopInterval;
+        
+        function startAutoLoop() {
+            if (loopInterval) {
+                clearInterval(loopInterval);
+            }
+            loopInterval = setInterval(restartAnimation, 10000);
+        }
+
+        function stopAutoLoop() {
+            if (loopInterval) {
+                clearInterval(loopInterval);
+                loopInterval = null;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initAnimation();
+            
+            setTimeout(() => {
+                startAutoLoop();
+            }, 12000);
+        });
+
+        // Handle visibility change
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                stopAutoLoop();
+            } else {
+                startAutoLoop();
+            }
+        });
+
+        // Pause on hover
+        document.querySelector('.collaboration-container').addEventListener('mouseenter', () => {
+            stopAutoLoop();
+        });
+
+        document.querySelector('.collaboration-container').addEventListener('mouseleave', () => {
+            startAutoLoop();
+        });
+
+        // Interactive elements
+        document.querySelector('.action-btn').addEventListener('click', function() {
+            this.style.background = 'linear-gradient(135deg, #1A73E8, #4285F4)';
+            this.style.borderColor = '#1A73E8';
+            this.style.color = '#FFFFFF';
+            setTimeout(() => {
+                this.style.background = 'linear-gradient(135deg, #E8F0FE, #D2E3FC)';
+                this.style.borderColor = '#1A73E8';
+                this.style.color = '#1A73E8';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
