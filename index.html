@@ -328,7 +328,6 @@
             letter-spacing: 0.05em;
         }
         .hero-title-main {
-            /* font-family:Arial, Helvetica, sans-serif; */
             font-size: 2.4rem;
             font-weight: 800;
             line-height: 1.2;
@@ -336,7 +335,6 @@
             color: #f5f5f5;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             text-transform: uppercase;
-            
         }
         .hero-title-sub {
             font-size: 2.5rem;
@@ -364,33 +362,366 @@
 
         .colortext{
             color: #d4af37;
+        }
 
+        /* Layout Classes */
+        .desktop-layout {
+            display: flex;
         }
         
-        /* Hide navigation on mobile */
-        @media (max-width: 768px) {
+        .desktop-sidebar {
+            width: 33.333333%;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .desktop-content {
+            width: 66.666667%;
+        }
+
+        /* Mobile Header Section */
+        .mobile-header {
+            display: none;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(32, 32, 32, 0.1) 0%, rgba(48, 48, 48, 0.15) 100%);
+            border-bottom: 1px solid rgba(80, 80, 80, 0.2);
+        }
+
+        /* RESPONSIVE MEDIA QUERIES */
+        
+        /* Large Desktop (1200px and up) */
+        @media (min-width: 1200px) {
+            .hero-title-main {
+                font-size: 2.8rem;
+            }
+            .hero-title-sub {
+                font-size: 2.9rem;
+            }
+            .desktop-sidebar {
+                padding: 4rem;
+            }
+            .project-section {
+                padding: 3rem;
+            }
+        }
+
+        /* Desktop (992px to 1199px) */
+        @media (min-width: 992px) and (max-width: 1199px) {
+            .hero-title-main {
+                font-size: 2.2rem;
+            }
+            .hero-title-sub {
+                font-size: 2.3rem;
+            }
+            .desktop-sidebar {
+                padding: 2.5rem;
+            }
+        }
+
+        /* Tablet Landscape (768px to 991px) */
+        @media (min-width: 768px) and (max-width: 991px) {
+            .desktop-sidebar {
+                width: 40%;
+                padding: 2rem;
+            }
+            
+            .desktop-content {
+                width: 60%;
+            }
+            
+            .hero-title-main {
+                font-size: 1.8rem;
+            }
+            
+            .hero-title-sub {
+                font-size: 1.9rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .project-section {
+                padding: 1.5rem;
+            }
+            
+            .nav-fab {
+                width: 48px;
+                height: 48px;
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+            
+            .nav-fab-menu {
+                top: 4rem;
+                right: 1.5rem;
+                min-width: 180px;
+            }
+        }
+
+        /* Mobile (767px and below) */
+        @media (max-width: 767px) {
+            body {
+                height: auto;
+                overflow: auto;
+            }
+            
+            .desktop-layout {
+                display: block;
+            }
+            
+            .desktop-sidebar {
+                display: none;
+            }
+            
+            .desktop-content {
+                width: 100%;
+            }
+            
+            .mobile-header {
+                display: block;
+            }
+            
+            .content-container {
+                height: auto;
+                overflow: visible;
+            }
+            
+            .project-section {
+                min-height: auto;
+                padding: 2rem 1rem;
+                align-items: flex-start;
+            }
+            
+            .project-iframe {
+                height: 60vh;
+            }
+            
+            .hero-title-main {
+                font-size: 1.75rem;
+                line-height: 1.3;
+            }
+            
+            .hero-title-sub {
+                font-size: 1.85rem;
+                line-height: 1.2;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.9rem;
+                line-height: 1.5;
+            }
+            
             .fixed-navigation {
                 display: none;
             }
+            
+            .bottom-navigation {
+                bottom: 1rem;
+                padding: 0.5rem 1rem;
+                border-radius: 1.5rem;
+            }
+            
             .nav-fab {
                 width: 48px;
                 height: 48px;
                 top: 1rem;
                 right: 1rem;
             }
+            
             .nav-fab-menu {
                 top: 4rem;
                 right: 1rem;
-                min-width: 180px;
+                min-width: 280px;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+            
+            .primary-button,
+            .secondary-button {
+                padding: 1rem 2rem;
+                font-size: 0.9rem;
+            }
+            
+            .experience-badge {
+                margin-bottom: 1.5rem;
+            }
+            
+            .project-card {
+                padding-top: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .project-title {
+                font-size: 1.75rem;
+                margin-bottom: 1rem;
+            }
+            
+            .project-description {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
             }
         }
 
+        /* Small Mobile (480px and below) */
+        @media (max-width: 480px) {
+            .mobile-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .project-section {
+                padding: 1.5rem 0.75rem;
+            }
+            
+            .hero-title-main {
+                font-size: 1.5rem;
+            }
+            
+            .hero-title-sub {
+                font-size: 1.6rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 0.85rem;
+            }
+            
+            .primary-button,
+            .secondary-button {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.85rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .project-iframe {
+                height: 50vh;
+            }
+            
+            .project-title {
+                font-size: 1.5rem;
+            }
+            
+            .project-description {
+                font-size: 0.85rem;
+            }
+            
+            .nav-fab {
+                width: 44px;
+                height: 44px;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+            
+            .nav-fab-menu {
+                top: 3.5rem;
+                right: 0.75rem;
+                left: 0.75rem;
+                min-width: auto;
+            }
+            
+            .bottom-navigation {
+                bottom: 0.75rem;
+                left: 0.75rem;
+                right: 0.75rem;
+                transform: none;
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .project-counter {
+                font-size: 0.7rem;
+            }
+        }
 
+        /* Extra Small Mobile (360px and below) */
+        @media (max-width: 360px) {
+            .mobile-header {
+                padding: 1rem 0.75rem;
+            }
+            
+            .hero-title-main {
+                font-size: 1.25rem;
+            }
+            
+            .hero-title-sub {
+                font-size: 1.35rem;
+            }
+            
+            .primary-button,
+            .secondary-button {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.8rem;
+            }
+            
+            .project-section {
+                padding: 1rem 0.5rem;
+            }
+            
+            .project-title {
+                font-size: 1.25rem;
+            }
+            
+            .nav-fab-menu {
+                padding: 0.75rem;
+            }
+            
+            .nav-menu-item {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
 
-      
+        /* Landscape Mobile Orientation */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .mobile-header {
+                padding: 1rem 1.5rem;
+            }
+            
+            .hero-title-main {
+                font-size: 1.5rem;
+            }
+            
+            .hero-title-sub {
+                font-size: 1.6rem;
+            }
+            
+            .project-iframe {
+                height: 70vh;
+            }
+        }
+
+        /* High DPI / Retina Displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .progress-bar {
+                height: 2px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .nav-fab,
+            .nav-fab-menu,
+            .bottom-navigation,
+            .fixed-navigation,
+            .progress-bar {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .project-iframe {
+                border: 1px solid #ccc;
+                height: 300px;
+            }
+        }
     </style>
 </head>
-<body class="text-white flex">
+<body class="text-white">
     <div class="progress-bar" id="progressBar"></div>
     
     <!-- Floating Action Button Navigation -->
@@ -428,65 +759,70 @@
                 <div class="text-xs opacity-60">AI Agents for BFSI</div>
             </div>
         </div>
-
-        <div class="nav-menu-item" data-project="3">
+        <div class="nav-menu-item" data-project="4">
             <div class="nav-menu-dot"></div>
             <div>
                 <div class="text-sm font-medium">Masha AI</div>
                 <div class="text-xs opacity-60">AI Workspace</div>
             </div>
         </div>
-        <div class="nav-menu-item" data-project="3">
+        <div class="nav-menu-item" data-project="5">
             <div class="nav-menu-dot"></div>
             <div>
                 <div class="text-sm font-medium">BFSI Agent App</div>
                 <div class="text-xs opacity-60">Banking Needs</div>
             </div>
         </div>
-        <div class="nav-menu-item" data-project="3">
+        <div class="nav-menu-item" data-project="6">
             <div class="nav-menu-dot"></div>
             <div>
                 <div class="text-sm font-medium">SBCC Landing page</div>
                 <div class="text-xs opacity-60">Parallax effects</div>
             </div>
         </div>
-        <div class="nav-menu-item" data-project="3">
+        <div class="nav-menu-item" data-project="7">
             <div class="nav-menu-dot"></div>
             <div>
                 <div class="text-sm font-medium">404 Page</div>
                 <div class="text-xs opacity-60">Mutual Fund</div>
             </div>
         </div>
-        <div class="nav-menu-item" data-project="3">
+        <div class="nav-menu-item" data-project="8">
             <div class="nav-menu-dot"></div>
             <div>
                 <div class="text-sm font-medium">Developer Portal</div>
                 <div class="text-xs opacity-60">Hero Section</div>
             </div>
         </div>
-
-
-
-
-
-
+        <div class="nav-menu-item" data-project="9">
+            <div class="nav-menu-dot"></div>
+            <div>
+                <div class="text-sm font-medium">Hackathon Challenges</div>
+                <div class="text-xs opacity-60">Competition Design</div>
+            </div>
+        </div>
+        <div class="nav-menu-item" data-project="10">
+            <div class="nav-menu-dot"></div>
+            <div>
+                <div class="text-sm font-medium">Stay Home</div>
+                <div class="text-xs opacity-60">Landing Page</div>
+            </div>
+        </div>
+        <div class="nav-menu-item" data-project="11">
+            <div class="nav-menu-dot"></div>
+            <div>
+                <div class="text-sm font-medium">Environment Monitor</div>
+                <div class="text-xs opacity-60">Dashboard</div>
+            </div>
+        </div>
+        <div class="nav-menu-item" data-project="12">
+            <div class="nav-menu-dot"></div>
+            <div>
+                <div class="text-sm font-medium">Architecture PPT</div>
+                <div class="text-xs opacity-60">Presentation Slide</div>
+            </div>
+        </div>
     </div>
-    
-    <!-- Right Side Navigation (Primary) -->
-    <!-- <div class="fixed-navigation">
-        <div class="nav-dot active" data-project="0">
-            <div class="nav-tooltip">API Design Platform</div>
-        </div>
-        <div class="nav-dot" data-project="1">
-            <div class="nav-tooltip">Real-time Collaboration</div>
-        </div>
-        <div class="nav-dot" data-project="2">
-            <div class="nav-tooltip">API Validation</div>
-        </div>
-        <div class="nav-dot" data-project="3">
-            <div class="nav-tooltip">AI Observability</div>
-        </div>
-    </div> -->
     
     <!-- Bottom Navigation (Alternative) -->
     <div class="bottom-navigation" style="display: none;" id="bottomNav">
@@ -495,27 +831,63 @@
         <div class="bottom-nav-dot" data-project="2"></div>
         <div class="bottom-nav-dot" data-project="3"></div>
         <div class="project-counter">
-            <span id="currentProject">1</span> / <span id="totalProjects">4</span>
+            <span id="currentProject">1</span> / <span id="totalProjects">13</span>
         </div>
     </div>
-    
-    <div class="w-1/3 p-12 flex flex-col justify-between relative">
-        <div>
-            <div class="mb-8">
-                <div class="experience-badge inline-flex items-center px-4 py-2 rounded-full mb-6">
+
+    <!-- Main Container -->
+    <div class="desktop-layout">
+        <!-- Desktop Sidebar -->
+        <div class="desktop-sidebar">
+            <div>
+                <div class="mb-8">
+                    <div class="experience-badge inline-flex items-center px-4 py-2 rounded-full mb-6">
+                        <div class="w-2 h-2 rounded-full mr-3 opacity-70" style="background-color: #d4af37;"></div>
+                        <span class="status-indicator text-sm">Rohan Janardhan Rao</span>
+                    </div>
+                </div>
+                
+                <div class="mb-8">
+                    <h1 class="hero-title-main">Design is not a decoration,</h1>
+                    <h1 class="hero-title-sub">it's direction</h1>
+                </div>
+                
+                <p class="hero-subtitle mb-12">
+                    In startups, I moved fast, felt deeper, and built for belonging — where commerce felt like connection. In service, I danced between industries, solving for twenty stories with one steady mindset — empathy.
+                </p>
+                
+                <div class="flex flex-col space-y-4 mb-16">
+                    <button onclick="window.open('https://rohanraoj-resume.netlify.app')" class="primary-button text-white font-medium py-4 px-8 rounded-lg flex items-center justify-center space-x-3">
+                        <span class="material-icons text-lg">insights</span>
+                        <span>Check my Resume</span>
+                    </button>
+                    <button onclick="window.open('https://www.behance.net/rohanrao11', '_blank')" class="secondary-button text-white font-medium py-4 px-8 rounded-lg flex items-center justify-center space-x-3">
+                        <span class="material-icons text-lg">code</span>
+                        <span>Behance</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Header Section -->
+        <div class="mobile-header">
+            <div class="mb-6">
+                <div class="experience-badge inline-flex items-center px-4 py-2 rounded-full mb-4">
                     <div class="w-2 h-2 rounded-full mr-3 opacity-70" style="background-color: #d4af37;"></div>
                     <span class="status-indicator text-sm">Rohan Janardhan Rao</span>
                 </div>
             </div>
             
-            <div class="mb-8">
+            <div class="mb-6">
                 <h1 class="hero-title-main">Design is not a decoration,</h1>
-                <h1 class="hero-title-sub"> it’s direction
-                </h1>
+                <h1 class="hero-title-sub">it's direction</h1>
             </div>
             
-            <p class="hero-subtitle mb-12">
-                In startups, I moved fast, felt deeper, and built for belonging — where commerce felt like connection. In service, I danced between industries, solving for twenty stories with one steady mindset — empathy.          <div class="flex flex-col space-y-4 mb-16">
+            <p class="hero-subtitle mb-8">
+                In startups, I moved fast, felt deeper, and built for belonging — where commerce felt like connection. In service, I danced between industries, solving for twenty stories with one steady mindset — empathy.
+            </p>
+            
+            <div class="flex flex-col space-y-3">
                 <button onclick="window.open('https://rohanraoj-resume.netlify.app')" class="primary-button text-white font-medium py-4 px-8 rounded-lg flex items-center justify-center space-x-3">
                     <span class="material-icons text-lg">insights</span>
                     <span>Check my Resume</span>
@@ -526,353 +898,195 @@
                 </button>
             </div>
         </div>
-        
-        <!-- Project Info Display -->
-        <!-- <div class="space-y-4">
-            <div class="text-xs muted-text uppercase tracking-wider font-medium">Current Project</div>
-            <div class="glass-effect p-4 rounded-lg">
-                <div class="text-lg font-semibold text-white mb-2" id="currentProjectTitle">API Design Platform</div>
-                <div class="text-sm text-gray-400" id="currentProjectDesc">Analytics & Monitoring</div>
-                <div class="mt-3 flex items-center justify-between">
-                    <div class="text-xs text-gray-500">Project <span id="currentNum">1</span> of <span id="totalNum">4</span></div>
-                    <div class="flex space-x-2">
-                        <button onclick="previousProject()" class="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center transition-colors">
-                            <span class="material-icons text-sm">keyboard_arrow_left</span>
-                        </button>
-                        <button onclick="nextProject()" class="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center transition-colors">
-                            <span class="material-icons text-sm">keyboard_arrow_right</span>
-                        </button>
+
+        <!-- Desktop Content -->
+        <div class="desktop-content content-container rounded-l-lg relative content-background" id="contentContainer">
+            <!-- Project 1: Lakshya -->
+            <div class="project-section" id="project0">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Lakshya</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
+                        </p>
                     </div>
+                    <img src="./lakshya.png" style="border-radius: 0.9rem;" alt="Lakshya Project">
                 </div>
             </div>
-        </div> -->
-    </div>
 
-    <div class="w-2/3 content-container rounded-l-lg relative content-background" id="contentContainer">
-
-
-
-
-
-         <!-- Project 6: AI Observability -->
-         <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Lakshya</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
+            <!-- Project 2: Lasting Asset -->
+            <div class="project-section" id="project1">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Lasting Asset</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Secure contact management system with advanced encryption, intuitive user interface, and comprehensive data protection features for professional networking.
+                        </p>
+                    </div>
+                    <img src="./Lasting Asset v4.png" style="border-radius: 0.9rem;" alt="Lasting Asset Project">
                 </div>
-            
-                <img src="./lakshya.png" style=" border-radius: 0.9rem;">
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
             </div>
-        </div>
 
-
-
-
-
-
-
-
-
-
-         <!-- Project 6: AI Observability -->
-         <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Lasting Asset</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
+            <!-- Project 3: Mutual Fund Cart Page -->
+            <div class="project-section" id="project2">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Mutual Fund Cart Page</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Streamlined cart interface for mutual fund investments with intuitive selection, comparison tools, and seamless checkout experience for financial planning.
+                        </p>
+                    </div>
+                    <img src="./mutual 1.png" style="border-radius: 0.9rem;" alt="Mutual Fund Cart">
                 </div>
-                <img src="./Lasting Asset v4.png" style=" border-radius: 0.9rem;">
-             
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
             </div>
-        </div>
 
-
-
-
-  <!-- Project 6: AI Observability -->
-  <div class="project-section" id="project3">
-    <div class="w-full fade-in rounded-md">
-        <div class="mb-8 project-card pt-8 ">
-            <h2 class="text-4xl font-bold project-title mb-6">Mutual Fund Cart Page</h2>
-            <p class="text-lg project-description mb-6 leading-relaxed">
-                Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-            </p>
-        </div>
-        <img src="./mutual 1.png" style=" border-radius: 0.9rem;">
-        <!-- <img src="./Screenshot 2025-08-25 at 12.44.56 AM.png" style=" border-radius: 0.9rem;"> -->
-        <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
-    </div>
-</div>
-
-
-
-
-
-        
-
-
-
-          <!-- Project 6: AI Observability -->
-          <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Financial Concierge</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./Screenshot 2025-08-25 at 12.44.56 AM.png" style=" border-radius: 0.9rem;">
-                <!-- <img src="./mutual 1.png" style=" border-radius: 0.9rem;"> -->
-               
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
-            </div>
-        </div>
-
-
-
-
-          <!-- Project 6: AI Observability -->
-          <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Masha AI</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <!-- <img src="./mutual 1.png" style=" border-radius: 0.9rem;"> -->
-                <img src="./behance cover.png" style=" border-radius: 0.9rem;">
-                
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
-            </div>
-        </div>
-
-
-
-
-
-
-            <!-- Project 6: AI Observability -->
+            <!-- Project 4: Financial Concierge -->
             <div class="project-section" id="project3">
                 <div class="w-full fade-in rounded-md">
-                    <div class="mb-8 project-card pt-8 ">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Financial Concierge</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            AI-powered financial assistant providing personalized banking recommendations, investment insights, and comprehensive financial planning for BFSI sector.
+                        </p>
+                    </div>
+                    <img src="./Screenshot 2025-08-25 at 12.44.56 AM.png" style="border-radius: 0.9rem;" alt="Financial Concierge">
+                </div>
+            </div>
+
+            <!-- Project 5: Masha AI -->
+            <div class="project-section" id="project4">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Masha AI</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Intelligent workspace platform leveraging AI to enhance productivity, collaboration, and workflow optimization for modern teams and enterprises.
+                        </p>
+                    </div>
+                    <img src="./behance cover.png" style="border-radius: 0.9rem;" alt="Masha AI">
+                </div>
+            </div>
+
+            <!-- Project 6: BFSI Agent App -->
+            <div class="project-section" id="project5">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
                         <h2 class="text-4xl font-bold project-title mb-6">BFSI Agent App</h2>
                         <p class="text-lg project-description mb-6 leading-relaxed">
-                            Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
+                            Comprehensive mobile application for banking and financial services agents, featuring client management, transaction processing, and performance analytics.
                         </p>
                     </div>
-                    <img src="./Axis deep geo bharat.png" style=" border-radius: 0.9rem; ">
-              
+                    <img src="./Axis deep geo bharat.png" style="border-radius: 0.9rem;" alt="BFSI Agent App">
                 </div>
             </div>
 
-
-
-          <!-- Project 6: AI Observability -->
-          <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">SBCC Landing page</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./Screenshot 2025-08-25 at 2.57.56 AM.png" style=" border-radius: 0.9rem;">
-                <!-- <img src="./Lasting Asset v4.png" style=" border-radius: 0.9rem;"> -->
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
-            </div>
-        </div>
-
-
-              <!-- Project 6: AI Observability -->
-              <div class="project-section" id="project3">
+            <!-- Project 7: SBCC Landing page -->
+            <div class="project-section" id="project6">
                 <div class="w-full fade-in rounded-md">
-                    <div class="mb-8 project-card pt-8 ">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">SBCC Landing page</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Modern landing page with advanced parallax effects, smooth animations, and engaging visual storytelling for enhanced user experience.
+                        </p>
+                    </div>
+                    <img src="./Screenshot 2025-08-25 at 2.57.56 AM.png" style="border-radius: 0.9rem;" alt="SBCC Landing">
+                </div>
+            </div>
+
+            <!-- Project 8: 404 Page -->
+            <div class="project-section" id="project7">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
                         <h2 class="text-4xl font-bold project-title mb-6">404 Page - Mutual Fund</h2>
                         <p class="text-lg project-description mb-6 leading-relaxed">
-                            Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
+                            Creative error page design for mutual fund platform, transforming user frustration into engagement with helpful navigation and visual appeal.
                         </p>
                     </div>
-                    <img src="./404.png" style=" border-radius: 0.9rem;">
-                    <!-- <img src="./mutual 1.png" style=" border-radius: 0.9rem;"> -->
-                   
-                    <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
+                    <img src="./404.png" style="border-radius: 0.9rem;" alt="404 Page">
                 </div>
             </div>
 
-
-
-              <!-- Project 6: AI Observability -->
-              <div class="project-section" id="project3">
+            <!-- Project 9: Developer Portal -->
+            <div class="project-section" id="project8">
                 <div class="w-full fade-in rounded-md">
-                    <div class="mb-8 project-card pt-8 ">
-                        <h2 class="text-4xl font-bold project-title mb-6">Developer portal Hero section & Product Feature </h2>
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Developer portal Hero section & Product Feature</h2>
                         <p class="text-lg project-description mb-6 leading-relaxed">
-                            Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
+                            Compelling hero section and feature showcase for developer portal, emphasizing API capabilities, documentation quality, and developer experience.
                         </p>
                     </div>
-                    <img src="./4.png" style=" border-radius: 0.9rem;">
-                    <!-- <img src="./mutual 1.png" style=" border-radius: 0.9rem;"> -->
-                   
-                    <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
+                    <img src="./4.png" style="border-radius: 0.9rem;" alt="Developer Portal">
                 </div>
             </div>
-        
 
-
-
-
-
-
-
-
-
-        
-        
-        <!-- Project 1: API Design Platform -->
-        <!-- <div class="project-section" id="project0">
-            <div class="w-full fade-in">
-                <div class="mb-8 project-card pt-8">
-                    <h2 class="text-4xl font-bold project-title mb-6">API Design Platform</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Sophisticated API design platform featuring real-time analytics, intelligent endpoint management, and comprehensive performance monitoring. 
-                    </p>
+            <!-- Project 10: Hackathon Challenges -->
+            <div class="project-section" id="project9">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Hackathon Challenges</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Dynamic competition platform design featuring challenge listings, team formation tools, and interactive elements to engage developers and innovators.
+                        </p>
+                    </div>
+                    <img src="./Day.png" style="border-radius: 0.9rem;" alt="Hackathon Challenges">
                 </div>
-                <iframe class="project-iframe" src="dark.html"></iframe>
             </div>
-        </div> -->
 
-
-
-
-
-
-
-        
-        <!-- Project 2: Real-time Collaboration -->
-        <!-- <div class="project-section" id="project1">
-            <div class="w-full fade-in">
-                <div class="mb-8 project-card pt-8">
-                    <h2 class="text-4xl font-bold project-title mb-6">Real-time Collaboration</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Live collaborative OpenAPI editor with instantaneous preview, multi-user editing cursors, and seamless synchronization. Witness how distributed teams collaborate effortlessly 
-                    </p>
+            <!-- Project 11: Stay Home Landing Page -->
+            <div class="project-section" id="project10">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Stay Home Landing Page</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Responsive landing page promoting remote work culture with compelling visuals, clear messaging, and optimized user journey for maximum conversion.
+                        </p>
+                    </div>
+                    <img src="./stay home 1.png" style="border-radius: 0.9rem;" alt="Stay Home Landing">
                 </div>
-                <iframe class="project-iframe" src="first-benefit.html"></iframe>
             </div>
-        </div> -->
 
-        <!-- Project 3: API Validation & Mocking -->
-        <!-- <div class="project-section" id="project2">
-            <div class="w-full fade-in">
-                <div class="mb-8 project-card pt-8">
-                    <h2 class="text-4xl font-bold project-title mb-6">API Validation & Mocking</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Intelligent API validation engine with real-time linting, contextual error detection, and automatic mock server generation. Features comprehensive testing capabilities and quality assurance 
-                    </p>
+            <!-- Project 12: Environment Monitoring Dashboard -->
+            <div class="project-section" id="project11">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Environment Monitoring Dashboard</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Comprehensive environmental data visualization platform with real-time monitoring, predictive analytics, and actionable insights for sustainability management.
+                        </p>
+                    </div>
+                    <img src="./Celestial Laptop Mockup.png" style="border-radius: 0.9rem;" alt="Environment Dashboard">
                 </div>
-                <iframe class="project-iframe" src="second.html"></iframe>
             </div>
-        </div> -->
 
-        <!-- Project 4: AI Observability -->
-        <!-- <div class="project-section" id="project3">
-            <div class="w-full fade-in">
-                <div class="mb-8 project-card pt-8">
-                    <h2 class="text-4xl font-bold project-title mb-6">AI Observability Dashboard</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
+            <!-- Project 13: Architecture PPT Slide -->
+            <div class="project-section" id="project12">
+                <div class="w-full fade-in rounded-md">
+                    <div class="mb-8 project-card pt-8">
+                        <h2 class="text-4xl font-bold project-title mb-6">Architecture PPT Slide</h2>
+                        <p class="text-lg project-description mb-6 leading-relaxed">
+                            Professional presentation slide design showcasing system architecture with clear visual hierarchy, technical diagrams, and engaging layout for stakeholder communication.
+                        </p>
+                    </div>
+                    <img src="./ppt 4.png" style="border-radius: 0.9rem;" alt="Architecture PPT">
                 </div>
-                <iframe class="project-iframe" src="third-benefit.html"></iframe>
-            </div>
-        </div> -->
-
-
-
-        <!-- Project 5: AI Observability -->
-        <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Hackathon Challenges</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./Day.png" style=" border-radius: 0.9rem;">
-                <!-- <iframe class="project-iframe" src="third-benefit.html"></iframe> -->
             </div>
         </div>
-
-          <!-- Project 6: AI Observability -->
-          <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Stay Home Landing Page</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./stay home 1.png" style=" border-radius: 0.9rem; ">
-          
-            </div>
-        </div>
-
-
-
-          <!-- Project 6: AI Observability -->
-          <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Environment Monitoring Dashboard</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./Celestial Laptop Mockup.png" style=" border-radius: 0.9rem; ">
-          
-            </div>
-        </div>
-
-
-
-
-
-  <!-- Project 6: AI Observability -->
-        <div class="project-section" id="project3">
-            <div class="w-full fade-in rounded-md">
-                <div class="mb-8 project-card pt-8 ">
-                    <h2 class="text-4xl font-bold project-title mb-6">Architecture PPT Slide</h2>
-                    <p class="text-lg project-description mb-6 leading-relaxed">
-                        Advanced monitoring dashboard powered by artificial intelligence, featuring predictive insights, performance metrics, cost optimization tracking, and real-time system health indicators 
-                    </p>
-                </div>
-                <img src="./ppt 4.png" style=" border-radius: 0.9rem; ">
-          
-            </div>
-        </div>
-
-
-
-
-        
-        
-
     </div>
 
     <script>
         const projects = [
-            { id: 'project0', title: 'Lakshya', desc: 'Analytics & Monitoring' },
-            { id: 'project1', title: 'Real-time Collaboration', desc: 'Live Editing & Sync' },
-            { id: 'project2', title: 'API Validation', desc: 'Smart Linting & Mocking' },
-            { id: 'project3', title: 'AI Observability', desc: 'Intelligent Monitoring' }
+            { id: 'project0', title: 'Lakshya', desc: 'Mutual Fund Platform' },
+            { id: 'project1', title: 'Lasting Asset', desc: 'Secure Contacts' },
+            { id: 'project2', title: 'Combo SIP', desc: 'Cart Page Design' },
+            { id: 'project3', title: 'Financial Concierge', desc: 'AI Agents for BFSI' },
+            { id: 'project4', title: 'Masha AI', desc: 'AI Workspace' },
+            { id: 'project5', title: 'BFSI Agent App', desc: 'Banking Needs' },
+            { id: 'project6', title: 'SBCC Landing', desc: 'Parallax Effects' },
+            { id: 'project7', title: '404 Page', desc: 'Error Page Design' },
+            { id: 'project8', title: 'Developer Portal', desc: 'Hero Section' },
+            { id: 'project9', title: 'Hackathon Challenges', desc: 'Competition Design' },
+            { id: 'project10', title: 'Stay Home', desc: 'Landing Page' },
+            { id: 'project11', title: 'Environment Monitor', desc: 'Dashboard Design' },
+            { id: 'project12', title: 'Architecture PPT', desc: 'Presentation Slide' }
         ];
         let currentProject = 0;
 
@@ -903,11 +1117,7 @@
                 });
             });
             
-            // Update project info in sidebar
-            document.getElementById('currentProjectTitle').textContent = projects[index].title;
-            document.getElementById('currentProjectDesc').textContent = projects[index].desc;
-            document.getElementById('currentNum').textContent = index + 1;
-            document.getElementById('totalNum').textContent = projects.length;
+            // Update counters
             document.getElementById('currentProject').textContent = index + 1;
             document.getElementById('totalProjects').textContent = projects.length;
         }
@@ -934,7 +1144,7 @@
             }
         });
 
-        // Add click listeners to all navigation elements
+        // Add click listeners to navigation elements
         [...navDots, ...bottomNavDots, ...navMenuItems].forEach((element, index) => {
             element.addEventListener('click', () => {
                 const projectIndex = parseInt(element.getAttribute('data-project'));
@@ -947,33 +1157,37 @@
         const contentContainer = document.getElementById('contentContainer');
         const progressBar = document.getElementById('progressBar');
 
-        contentContainer.addEventListener('scroll', () => {
-            const scrollTop = contentContainer.scrollTop;
-            const scrollHeight = contentContainer.scrollHeight - contentContainer.clientHeight;
-            const scrollProgress = (scrollTop / scrollHeight) * 100;
-            
-            // Update progress bar
-            progressBar.style.width = scrollProgress + '%';
-
-            // Determine which project is currently visible
-            const projectElements = projects.map(project => document.getElementById(project.id));
-            const containerTop = contentContainer.getBoundingClientRect().top;
-            
-            let activeIndex = 0;
-            projectElements.forEach((element, index) => {
-                const rect = element.getBoundingClientRect();
-                const elementCenter = rect.top + rect.height / 2;
-                const containerCenter = containerTop + contentContainer.clientHeight / 2;
+        if (contentContainer) {
+            contentContainer.addEventListener('scroll', () => {
+                const scrollTop = contentContainer.scrollTop;
+                const scrollHeight = contentContainer.scrollHeight - contentContainer.clientHeight;
+                const scrollProgress = (scrollTop / scrollHeight) * 100;
                 
-                if (Math.abs(elementCenter - containerCenter) < contentContainer.clientHeight / 2) {
-                    activeIndex = index;
+                // Update progress bar
+                progressBar.style.width = scrollProgress + '%';
+
+                // Determine which project is currently visible
+                const projectElements = projects.map(project => document.getElementById(project.id));
+                const containerTop = contentContainer.getBoundingClientRect().top;
+                
+                let activeIndex = 0;
+                projectElements.forEach((element, index) => {
+                    if (element) {
+                        const rect = element.getBoundingClientRect();
+                        const elementCenter = rect.top + rect.height / 2;
+                        const containerCenter = containerTop + contentContainer.clientHeight / 2;
+                        
+                        if (Math.abs(elementCenter - containerCenter) < contentContainer.clientHeight / 2) {
+                            activeIndex = index;
+                        }
+                    }
+                });
+                
+                if (activeIndex !== currentProject) {
+                    updateActiveProject(activeIndex);
                 }
             });
-            
-            if (activeIndex !== currentProject) {
-                updateActiveProject(activeIndex);
-            }
-        });
+        }
 
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -996,23 +1210,6 @@
                     element.style.animationDelay = `${index * 0.1}s`;
                 }, 100);
             });
-        });
-
-        // Mouse wheel navigation enhancement
-        let isScrolling = false;
-        contentContainer.addEventListener('wheel', (e) => {
-            if (isScrolling) return;
-            
-            if (Math.abs(e.deltaY) > 50) {
-                isScrolling = true;
-                setTimeout(() => isScrolling = false, 1000);
-                
-                if (e.deltaY > 0 && currentProject < projects.length - 1) {
-                    nextProject();
-                } else if (e.deltaY < 0 && currentProject > 0) {
-                    previousProject();
-                } 
-            }
         });
 
         // Initialize
