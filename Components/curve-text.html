@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curved Loop Marquee</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .curved-loop-jacket {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .curved-loop-svg {
+            user-select: none;
+            width: 100%;
+            aspect-ratio: 100 / 12;
+            overflow: visible;
+            display: block;
+            font-size: 6rem;
+            fill: #ffffff;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .measure-text {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            position: absolute;
+            top: -9999px;
+        }
+    </style>
+</head>
+<body>
+    <div id="curved-loop-container">
+        <div class="curved-loop-jacket">
+            <svg class="curved-loop-svg" viewBox="0 0 1440 120">
+                <text class="measure-text" id="measureText"></text>
+                <defs>
+                    <path id="curvePath" d="" fill="none" stroke="transparent" />
+                </defs>
+                <text font-weight="bold" xml:space="preserve" id="mainText" style="visibility: hidden;">
+                    <textPath href="#curvePath" startOffset="0px" xml:space="preserve" id="textPath"></textPath>
+                </text>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        class CurvedLoop {
+            constructor(options = {}) {
+                this.marqueeText = options.marqueeText || "DRAG ME TO CONTROL • INTERACTIVE CURVED TEXT • ";
+                this.speed = options.speed || 2;
+                this.curveAmount = options.curveAmount || 400;
+                this.direction = options.direction || "left";
+                this.interactive = options.interactive !== false;
+
+                this.spacing = 0;
+                this.offset = 0;
+                this.isDragging = false;
+                this.lastX = 0;
+                this.velocity = 0;
+                this.animationFrame = null;
+
+                this.init();
+            }
+
+            init() {
+                this.setupElements();
+                this.processText();
+                this.measureText();
+                this.setupEvents();
+            }
+
+            setupElements() {
+                this.container = document.getElementById('curved-loop-container');
+                this.jacket = this.container.querySelector('.curved-loop-jacket');
+                this.svg = this.container.querySelector('.curved-loop-svg');
+                this.measureElement = document.getElementById('measureText');
+                this.pathElement = document.getElementById('curvePath');
+                this.mainText = document.getElementById('mainText');
+                this.textPath = document.getElementById('textPath');
+
+                // Set up the curve path
+                const pathD = `M-100,40 Q500,${40 + this.curveAmount} 1540,40`;
+                this.pathElement.setAttribute('d', pathD);
+            }
+
+            processText() {
+                const hasTrailing = /\s|\u00A0$/.test(this.marqueeText);
+                this.text = (hasTrailing ? this.marqueeText.replace(/\s+$/, "") : this.marqueeText) + "\u00A0";
+            }
+
+            measureText() {
+                this.measureElement.textContent = this.text;
+                this.measureElement.style.fontSize = '6rem';
+                this.measureElement.style.fontWeight = '700';
+                this.measureElement.style.textTransform = 'uppercase';
+                
+                // Force layout and measure
+                this.measureElement.style.visibility = 'visible';
+                this.spacing = this.measureElement.getComputedTextLength();
+                this.measureElement.style.visibility = 'hidden';
+
+                if (this.spacing > 0) {
+                    this.setupText();
+                    this.startAnimation();
+                }
+            }
+
+            setupText() {
+                const textLength = this.spacing;
+                const repetitions = Math.ceil(1800 / textLength) + 2;
+                this.totalText = Array(repetitions).fill(this.text).join('');
+                
+                this.textPath.textContent = this.totalText;
+                
+                const initial = -this.spacing;
+                this.textPath.setAttribute("startOffset", initial + "px");
+                this.offset = initial;
+                
+                this.mainText.style.visibility = 'visible';
+                this.jacket.style.visibility = 'visible';
+            }
+
+            setupEvents() {
+                if (!this.interactive) return;
+
+                this.jacket.addEventListener('pointerdown', (e) => this.onPointerDown(e));
+                this.jacket.addEventListener('pointermove', (e) => this.onPointerMove(e));
+                this.jacket.addEventListener('pointerup', () => this.endDrag());
+                this.jacket.addEventListener('pointerleave', () => this.endDrag());
+                
+                // Prevent default drag behavior
+                this.jacket.addEventListener('dragstart', (e) => e.preventDefault());
+            }
+
+            onPointerDown(e) {
+                if (!this.interactive) return;
+                this.isDragging = true;
+                this.lastX = e.clientX;
+                this.velocity = 0;
+                
+                if (e.target.setPointerCapture) {
+                    e.target.setPointerCapture(e.pointerId);
+                }
+                
+                this.jacket.style.cursor = 'grabbing';
+                e.preventDefault();
+            }
+
+            onPointerMove(e) {
+                if (!this.interactive || !this.isDragging) return;
+                
+                const dx = e.clientX - this.lastX;
+                this.lastX = e.clientX;
+                this.velocity = dx;
+
+                const currentOffset = parseFloat(this.textPath.getAttribute("startOffset") || "0");
+                let newOffset = currentOffset + dx;
+
+                const wrapPoint = this.spacing;
+                if (newOffset <= -wrapPoint) newOffset += wrapPoint;
+                if (newOffset > 0) newOffset -= wrapPoint;
+
+                this.textPath.setAttribute("startOffset", newOffset + "px");
+                this.offset = newOffset;
+                
+                e.preventDefault();
+            }
+
+            endDrag() {
+                if (!this.interactive) return;
+                this.isDragging = false;
+                this.direction = this.velocity > 0 ? "right" : "left";
+                this.jacket.style.cursor = 'grab';
+            }
+
+            startAnimation() {
+                if (!this.spacing) return;
+                
+                const animate = () => {
+                    if (!this.isDragging) {
+                        const delta = this.direction === "right" ? this.speed : -this.speed;
+                        const currentOffset = parseFloat(this.textPath.getAttribute("startOffset") || "0");
+                        let newOffset = currentOffset + delta;
+
+                        const wrapPoint = this.spacing;
+                        if (newOffset <= -wrapPoint) newOffset += wrapPoint;
+                        if (newOffset > 0) newOffset -= wrapPoint;
+
+                        this.textPath.setAttribute("startOffset", newOffset + "px");
+                        this.offset = newOffset;
+                    }
+                    
+                    this.animationFrame = requestAnimationFrame(animate);
+                };
+                
+                this.animationFrame = requestAnimationFrame(animate);
+            }
+
+            updateCursor() {
+                if (this.interactive) {
+                    this.jacket.style.cursor = this.isDragging ? 'grabbing' : 'grab';
+                } else {
+                    this.jacket.style.cursor = 'auto';
+                }
+            }
+
+            destroy() {
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                }
+            }
+        }
+
+        // Initialize the curved loop when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const curvedLoop = new CurvedLoop({
+                marqueeText: "NOTHING IS IMPOSSIBLE ✨ THOUGHTS BECOME THINGS  ၊၊||၊|။||||။‌‌‌‌‌၊|၊၊ EVERYTHING IS CONNECTED ☯️",
+            
+                speed: 6,
+                curveAmount: 400,
+                direction: "left",
+                interactive: true
+            });
+        });
+    </script>
+</body>
+</html>
