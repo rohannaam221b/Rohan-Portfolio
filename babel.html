@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Management - Redesigned</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Custom styles for consistent SaaS aesthetic */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e5e7eb;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .table-row-hover:hover {
+            background-color: #f9fafb;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .filter-chip {
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border-radius: 16px;
+            font-size: 14px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .filter-chip.active {
+            background: #6366f1;
+            color: white;
+            border-color: #6366f1;
+        }
+
+        .sidebar-nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            color: white;
+            opacity: 0.8;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.2);
+            border-left: 3px solid white;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // Mock data
+        const mockData = {
+            metrics: {
+                licensesBought: 250,
+                provisionedUsers: 198,
+                usage: 79,
+                riskyUsers: 12,
+                potentialSavings: 4280
+            },
+            licenses: [
+                { id: 1, name: 'Microsoft 365 E3', type: 'Productivity', cost: 3600, bought: 50, used: 42, usage: 84, savings: 960 },
+                { id: 2, name: 'Salesforce Sales Cloud', type: 'CRM', cost: 5400, bought: 30, used: 28, usage: 93, savings: 360 },
+                { id: 3, name: 'Adobe Creative Cloud', type: 'Design', cost: 4200, bought: 25, used: 18, usage: 72, savings: 1680 },
+                { id: 4, name: 'Slack Business+', type: 'Communication', cost: 1800, bought: 75, used: 68, usage: 91, savings: 252 },
+                { id: 5, name: 'Jira Software', type: 'Project Management', cost: 2400, bought: 40, used: 31, usage: 78, savings: 648 },
+                { id: 6, name: 'Zoom Business', type: 'Communication', cost: 1200, bought: 50, used: 45, usage: 90, savings: 180 }
+            ],
+            users: [
+                { id: 1, name: 'John Smith', email: 'john.smith@company.com', department: 'Engineering', licenses: ['Microsoft 365', 'Jira', 'Slack'], lastActive: '2 hours ago', status: 'active' },
+                { id: 2, name: 'Sarah Johnson', email: 'sarah.j@company.com', department: 'Design', licenses: ['Adobe CC', 'Microsoft 365', 'Slack'], lastActive: '1 day ago', status: 'active' },
+                { id: 3, name: 'Mike Chen', email: 'mike.chen@company.com', department: 'Sales', licenses: ['Salesforce', 'Microsoft 365', 'Zoom'], lastActive: '3 days ago', status: 'active' },
+                { id: 4, name: 'Emily Davis', email: 'emily.d@company.com', department: 'Marketing', licenses: ['Adobe CC', 'Microsoft 365'], lastActive: '2 weeks ago', status: 'inactive' },
+                { id: 5, name: 'Robert Wilson', email: 'robert.w@company.com', department: 'Engineering', licenses: ['Jira', 'Slack'], lastActive: '1 month ago', status: 'risky' },
+                { id: 6, name: 'Lisa Anderson', email: 'lisa.a@company.com', department: 'HR', licenses: ['Microsoft 365', 'Zoom'], lastActive: '5 minutes ago', status: 'active' }
+            ],
+            departments: [
+                { name: 'Engineering', users: 45, usage: 88 },
+                { name: 'Sales', users: 32, usage: 92 },
+                { name: 'Design', users: 18, usage: 75 },
+                { name: 'Marketing', users: 25, usage: 68 },
+                { name: 'HR', users: 12, usage: 85 }
+            ]
+        };
+
+        function LicenseManagement() {
+            const [filters, setFilters] = useState({
+                department: 'all',
+                status: 'all',
+                license: 'all',
+                search: ''
+            });
+            const [selectedUsers, setSelectedUsers] = useState([]);
+            const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+            const chartRef = useRef(null);
+            const usageChartRef = useRef(null);
+
+            useEffect(() => {
+                // Initialize provisioned vs deprovisioned chart
+                if (chartRef.current) {
+                    const ctx = chartRef.current.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Provisioned', 'Deprovisioned'],
+                            datasets: [{
+                                data: [198, 52],
+                                backgroundColor: ['#6366f1', '#e5e7eb'],
+                                borderWidth: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 15,
+                                        font: { size: 12 }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Initialize usage by department chart
+                if (usageChartRef.current) {
+                    const ctx = usageChartRef.current.getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: mockData.departments.map(d => d.name),
+                            datasets: [{
+                                label: 'Usage %',
+                                data: mockData.departments.map(d => d.usage),
+                                backgroundColor: '#6366f1',
+                                borderRadius: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 100,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return value + '%';
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+            }, []);
+
+            const handleSort = (key) => {
+                let direction = 'asc';
+                if (sortConfig.key === key && sortConfig.direction === 'asc') {
+                    direction = 'desc';
+                }
+                setSortConfig({ key, direction });
+            };
+
+            const sortedLicenses = [...mockData.licenses].sort((a, b) => {
+                if (!sortConfig.key) return 0;
+                
+                const aValue = a[sortConfig.key];
+                const bValue = b[sortConfig.key];
+                
+                if (sortConfig.direction === 'asc') {
+                    return aValue > bValue ? 1 : -1;
+                } else {
+                    return aValue < bValue ? 1 : -1;
+                }
+            });
+
+            const filteredUsers = mockData.users.filter(user => {
+                if (filters.department !== 'all' && user.department !== filters.department) return false;
+                if (filters.status !== 'all' && user.status !== filters.status) return false;
+                if (filters.search && !user.name.toLowerCase().includes(filters.search.toLowerCase()) && 
+                    !user.email.toLowerCase().includes(filters.search.toLowerCase())) return false;
+                return true;
+            });
+
+            return (
+                <div className="flex h-screen">
+                    {/* Sidebar */}
+                    <div className="w-64 sidebar-nav">
+                        <div className="p-6">
+                            <h2 className="text-white text-2xl font-bold mb-8">SaaSAdmin</h2>
+                            <nav>
+                                <div className="nav-item">
+                                    <i className="fas fa-chart-bar mr-3"></i> Dashboard
+                                </div>
+                                <div className="nav-item active">
+                                    <i className="fas fa-key mr-3"></i> License Management
+                                </div>
+                                <div className="nav-item">
+                                    <i className="fas fa-users mr-3"></i> Users
+                                </div>
+                                <div className="nav-item">
+                                    <i className="fas fa-cog mr-3"></i> Settings
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className="flex-1 overflow-auto">
+                        <div className="p-8 glass-effect min-h-full">
+                            {/* Header */}
+                            <div className="mb-8 animate-slide-in">
+                                <h1 className="text-3xl font-bold text-gray-800 mb-2">License Management</h1>
+                                <p className="text-gray-600">Monitor and optimize your software license utilization</p>
+                            </div>
+
+                            {/* Filters Section */}
+                            <div className="mb-6 p-4 bg-white rounded-lg shadow-sm animate-slide-in" style={{animationDelay: '0.1s'}}>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex gap-3">
+                                        <select 
+                                            className="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            value={filters.department}
+                                            onChange={(e) => setFilters({...filters, department: e.target.value})}
+                                        >
+                                            <option value="all">All Departments</option>
+                                            <option value="Engineering">Engineering</option>
+                                            <option value="Sales">Sales</option>
+                                            <option value="Design">Design</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="HR">HR</option>
+                                        </select>
+                                        
+                                        <select 
+                                            className="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            value={filters.status}
+                                            onChange={(e) => setFilters({...filters, status: e.target.value})}
+                                        >
+                                            <option value="all">All Status</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="risky">Risky</option>
+                                        </select>
+
+                                        <select 
+                                            className="px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                            value={filters.license}
+                                            onChange={(e) => setFilters({...filters, license: e.target.value})}
+                                        >
+                                            <option value="all">All Licenses</option>
+                                            <option value="Microsoft 365">Microsoft 365</option>
+                                            <option value="Salesforce">Salesforce</option>
+                                            <option value="Adobe CC">Adobe CC</option>
+                                            <option value="Slack">Slack</option>
+                                            <option value="Jira">Jira</option>
+                                            <option value="Zoom">Zoom</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button className="px-4 py-2 text-sm text-indigo-600 hover:text-indigo-700">
+                                        <i className="fas fa-redo mr-2"></i>Reset Filters
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Metrics Cards */}
+                            <div className="grid grid-cols-5 gap-4 mb-8">
+                                <div className="metric-card animate-slide-in" style={{animationDelay: '0.2s'}}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-gray-500 text-sm">Licenses Bought</span>
+                                        <i className="fas fa-shopping-cart text-indigo-500"></i>
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-800">{mockData.metrics.licensesBought}</div>
+                                    <div className="text-xs text-green-600 mt-1">+12% from last month</div>
+                                </div>
+
+                                <div className="metric-card animate-slide-in" style={{animationDelay: '0.25s'}}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-gray-500 text-sm">Provisioned Users</span>
+                                        <i className="fas fa-user-check text-green-500"></i>
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-800">{mockData.metrics.provisionedUsers}</div>
+                                    <div className="text-xs text-gray-500 mt-1">79% of total</div>
+                                </div>
+
+                                <div className="metric-card animate-slide-in" style={{animationDelay: '0.3s'}}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-gray-500 text-sm">Usage Rate</span>
+                                        <i className="fas fa-chart-line text-blue-500"></i>
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-800">{mockData.metrics.usage}%</div>
+                                    <div className="progress-bar mt-2">
+                                        <div className="progress-fill bg-blue-500" style={{width: `${mockData.metrics.usage}%`}}></div>
+                                    </div>
+                                </div>
+
+                                <div className="metric-card animate-slide-in" style={{animationDelay: '0.35s'}}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-gray-500 text-sm">Risky Users</span>
+                                        <i className="fas fa-exclamation-triangle text-yellow-500"></i>
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-800">{mockData.metrics.riskyUsers}</div>
+                                    <div className="text-xs text-yellow-600 mt-1">Inactive 30+ days</div>
+                                </div>
+
+                                <div className="metric-card animate-slide-in" style={{animationDelay: '0.4s'}}>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-gray-500 text-sm">Potential Savings</span>
+                                        <i className="fas fa-dollar-sign text-green-500"></i>
+                                    </div>
+                                    <div className="text-2xl font-bold text-gray-800">${mockData.metrics.potentialSavings}</div>
+                                    <div className="text-xs text-green-600 mt-1">Per month</div>
+                                </div>
+                            </div>
+
+                            {/* License Utilization Table */}
+                            <div className="bg-white rounded-lg shadow-sm mb-8 animate-slide-in" style={{animationDelay: '0.45s'}}>
+                                <div className="p-4 border-b">
+                                    <h2 className="text-lg font-semibold text-gray-800">License Utilization</h2>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                                    onClick={() => handleSort('name')}>
+                                                    License Name <i className="fas fa-sort text-gray-400 ml-1"></i>
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Type
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                                    onClick={() => handleSort('cost')}>
+                                                    Monthly Cost <i className="fas fa-sort text-gray-400 ml-1"></i>
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Licenses
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                                    onClick={() => handleSort('usage')}>
+                                                    Usage <i className="fas fa-sort text-gray-400 ml-1"></i>
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                                                    onClick={() => handleSort('savings')}>
+                                                    Potential Savings <i className="fas fa-sort text-gray-400 ml-1"></i>
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {sortedLicenses.map(license => (
+                                                <tr key={license.id} className="table-row-hover">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm font-medium text-gray-900">{license.name}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className="filter-chip text-xs">{license.type}</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        ${license.cost}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {license.used} / {license.bought}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center">
+                                                            <span className="text-sm text-gray-900 mr-2">{license.usage}%</span>
+                                                            <div className="progress-bar w-24">
+                                                                <div className={`progress-fill ${license.usage > 80 ? 'bg-green-500' : license.usage > 60 ? 'bg-yellow-500' : 'bg-red-500'}`} 
+                                                                     style={{width: `${license.usage}%`}}></div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`text-sm font-medium ${license.savings > 1000 ? 'text-red-600' : 'text-yellow-600'}`}>
+                                                            ${license.savings}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <button className="text-indigo-600 hover:text-indigo-900 mr-3">
+                                                            <i className="fas fa-chart-bar"></i>
+                                                        </button>
+                                                        <button className="text-indigo-600 hover:text-indigo-900">
+                                                            <i className="fas fa-cog"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            {/* Analytics Section */}
+                            <div className="grid grid-cols-2 gap-6 mb-8">
+                                <div className="bg-white rounded-lg shadow-sm p-6 animate-slide-in" style={{animationDelay: '0.5s'}}>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">User Provisioning Status</h3>
+                                    <div style={{height: '200px'}}>
+                                        <canvas ref={chartRef}></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white rounded-lg shadow-sm p-6 animate-slide-in" style={{animationDelay: '0.55s'}}>
+                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Usage by Department</h3>
+                                    <div style={{height: '200px'}}>
+                                        <canvas ref={usageChartRef}></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Users Table */}
+                            <div className="bg-white rounded-lg shadow-sm animate-slide-in" style={{animationDelay: '0.6s'}}>
+                                <div className="p-4 border-b">
+                                    <div className="flex items-center justify-between">
+                                        <h2 className="text-lg font-semibold text-gray-800">User License Assignments</h2>
+                                        <div className="flex gap-2">
+                                            <div className="relative">
+                                                <input 
+                                                    type="text" 
+                                                    placeholder="Search users..."
+                                                    className="pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                    value={filters.search}
+                                                    onChange={(e) => setFilters({...filters, search: e.target.value})}
+                                                />
+                                                <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                            </div>
+                                            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700">
+                                                <i className="fas fa-plus mr-2"></i>Assign License
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {selectedUsers.length > 0 && (
+                                    <div className="p-3 bg-indigo-50 border-b flex items-center justify-between">
+                                        <span className="text-sm text-indigo-700">{selectedUsers.length} users selected</span>
+                                        <div className="flex gap-2">
+                                            <button className="px-3 py-1 text-sm bg-white text-indigo-600 rounded border border-indigo-600 hover:bg-indigo-50">
+                                                Revoke Licenses
+                                            </button>
+                                            <button className="px-3 py-1 text-sm bg-white text-indigo-600 rounded border border-indigo-600 hover:bg-indigo-50">
+                                                Send Reminder
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left">
+                                                    <input 
+                                                        type="checkbox"
+                                                        onChange={(e) => {
+                                                            if (e.target.checked) {
+                                                                setSelectedUsers(filteredUsers.map(u => u.id));
+                                                            } else {
+                                                                setSelectedUsers([]);
+                                                            }
+                                                        }}
+                                                    />
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    User
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Department
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Assigned Licenses
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Last Active
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Status
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                    Actions
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {filteredUsers.map(user => (
+                                                <tr key={user.id} className="table-row-hover">
+                                                    <td className="px-6 py-4">
+                                                        <input 
+                                                            type="checkbox"
+                                                            checked={selectedUsers.includes(user.id)}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSelectedUsers(selectedUsers.filter(id => id !== user.id));
+                                                                }
+                                                            }}
+                                                        />
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center">
+                                                            <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
+                                                                <span className="text-xs font-medium text-indigo-600">
+                                                                    {user.name.split(' ').map(n => n[0]).join('')}
+                                                                </span>
+                                                            </div>
+                                                            <div>
+                                                                <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                                                                <div className="text-xs text-gray-500">{user.email}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {user.department}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex flex-wrap gap-1">
+                                                            {user.licenses.map((license, idx) => (
+                                                                <span key={idx} className="filter-chip text-xs">
+                                                                    {license}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {user.lastActive}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`status-badge ${
+                                                            user.status === 'active' ? 'bg-green-100 text-green-800' :
+                                                            user.status === 'inactive' ? 'bg-gray-100 text-gray-800' :
+                                                            'bg-yellow-100 text-yellow-800'
+                                                        }`}>
+                                                            {user.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                                                        <button className="text-indigo-600 hover:text-indigo-900 mr-3" title="View Details">
+                                                            <i className="fas fa-eye"></i>
+                                                        </button>
+                                                        <button className="text-indigo-600 hover:text-indigo-900 mr-3" title="Edit">
+                                                            <i className="fas fa-edit"></i>
+                                                        </button>
+                                                        <button className="text-red-600 hover:text-red-900" title="Revoke">
+                                                            <i className="fas fa-times-circle"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div className="p-4 border-t flex items-center justify-between">
+                                    <div className="text-sm text-gray-500">
+                                        Showing {filteredUsers.length} of {mockData.users.length} users
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">Previous</button>
+                                        <button className="px-3 py-1 bg-indigo-600 text-white rounded text-sm">1</button>
+                                        <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">2</button>
+                                        <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">3</button>
+                                        <button className="px-3 py-1 border rounded text-sm hover:bg-gray-50">Next</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<LicenseManagement />, document.getElementById('root'));
+    </script>
+</body>
+</html>
